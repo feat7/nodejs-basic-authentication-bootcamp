@@ -3,7 +3,7 @@ const auth = require("../auth");
 
 const router = express.Router();
 
-router.get("/", auth.required, (req, res, next) => {
+router.post("/", (req, res, next) => {
   res.send("Hello world! welcome to dashboard");
 });
 

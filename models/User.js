@@ -8,14 +8,16 @@ const saltRounds = 10;
 const UserSchema = new Schema({
   email: {
     type: String,
+    required: true,
     unique: true,
-    required: true
+    select: true
   },
   password: String
 });
 
 // Pre save hook
-UserSchema.pre("save", next => {
+// eslint-disable-next-line func-names
+UserSchema.pre("save", function(next) {
   this.password = bcrypt.hashSync(this.password, saltRounds);
   next();
 });
@@ -23,7 +25,9 @@ UserSchema.pre("save", next => {
 // Unique Validator Plugin for mongoose
 UserSchema.plugin(uniqueValidator);
 
-UserSchema.methods.validatePassword = password => {
+// eslint-disable-next-line func-names
+UserSchema.methods.validatePassword = function(password) {
+  if (!password) return false;
   return bcrypt.compareSync(password, this.password);
 };
 

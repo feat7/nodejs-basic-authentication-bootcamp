@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const express = require("express");
+const mongoose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -9,18 +10,29 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const FileStore = require("session-file-store")(session);
 
-const indexRouter = require("./routes/index");
+const mainRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+
+mongoose.Promise = global.Promise;
 
 // User Model
 const User = require("./models/User");
 
+mongoose
+  .connect("mongodb://localhost:27017/nodesetup", {
+    useNewUrlParser: true
+  })
+  .then(() => console.log("connection successful"))
+  .catch(err => console.error(err));
+
 // configure passport.js to use the local strategy
 passport.use(
   new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    return User.findOne({ email }).then(user => {
-      return done(null, user.validatePassword(password));
-    });
+    return User.findOne({ email })
+      .then(user => {
+        return done(null, user.validatePassword(password));
+      })
+      .catch(e => done(null, false));
   })
 );
 
@@ -60,7 +72,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
+app.use("/", mainRouter);
 app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
