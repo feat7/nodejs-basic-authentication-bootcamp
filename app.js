@@ -1,14 +1,12 @@
 const createError = require("http-errors");
 const express = require("express");
+const session = require("express-session");
 const mongoose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const session = require("express-session");
-const uuid = require("uuid/v4");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const FileStore = require("session-file-store")(session);
 
 const mainRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -32,19 +30,20 @@ passport.use(
       .then(user => {
         return done(null, user.validatePassword(password));
       })
-      .catch(e => done(null, false));
+      .catch(e => {
+        console.log(e.message);
+        done(null, false);
+      });
   })
 );
 
 // tell passport how to serialize the user
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user);
 });
 
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
+passport.deserializeUser((user, done) => {
+  done(null, user);
 });
 
 const app = express();
@@ -53,24 +52,15 @@ const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-// session
-app.use(
-  session({
-    genid: () => {
-      return uuid();
-    },
-    store: new FileStore(),
-    secret: "Some seceret key.",
-    resave: false,
-    saveUninitialized: true
-  })
-);
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(session({ secret: "somesecretkey" }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", mainRouter);
 app.use("/users", usersRouter);

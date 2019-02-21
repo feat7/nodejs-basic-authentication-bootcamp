@@ -1,10 +1,9 @@
-const passport = require("passport");
-
 const auth = {
   required: (req, res, next) => {
-    passport.authenticate("local", {
-      failureRedirect: "/users/login"
-    })(req, res, next);
+    if (req.user) return next();
+    return res.status(401).json({
+      error: "User not authenticated"
+    });
   },
   optional: (req, res, next) => {
     next();
