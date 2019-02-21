@@ -1,54 +1,82 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-var uuid = require('uuid/v4');
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const session = require("express-session");
+const uuid = require("uuid/v4");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const FileStore = require("session-file-store")(session);
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
 
-var app = express();
+// User Model
+const User = require("./models/User");
+
+// configure passport.js to use the local strategy
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    return User.findOne({ email }).then(user => {
+      return done(null, user.validatePassword(password));
+    });
+  })
+);
+
+// tell passport how to serialize the user
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
+
+const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 // session
-app.use(session({
-  genid: req => {
-    console.log('----------- Inside session middleware ---------');
-    return uuid();
-  },
-  secret: 'Some seceret key.',
-  resave: false,
-  saveUninitialized: true
-}))
+app.use(
+  session({
+    genid: () => {
+      return uuid();
+    },
+    store: new FileStore(),
+    secret: "Some seceret key.",
+    resave: false,
+    saveUninitialized: true
+  })
+);
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render("error");
 });
 
 module.exports = app;
