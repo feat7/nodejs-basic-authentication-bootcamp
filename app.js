@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const sassMiddleware = require("node-sass-middleware");
 
 const mainRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -56,11 +57,22 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use(session({ secret: "somesecretkey" }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(
+  sassMiddleware({
+    /* Options */
+    src: path.join(__dirname, "sass"),
+    dest: path.join(__dirname, "public", "stylesheets"),
+    debug: true,
+    outputStyle: "compressed",
+    prefix: "/stylesheets"
+  })
+);
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", mainRouter);
 app.use("/users", usersRouter);

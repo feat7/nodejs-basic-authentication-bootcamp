@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "bulma": "^0.7.4",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
@@ -16,6 +17,7 @@
     "mongoose": "^5.4.14",
     "mongoose-unique-validator": "^2.0.2",
     "morgan": "~1.9.0",
+    "node-sass-middleware": "^0.11.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0"
   },
