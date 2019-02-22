@@ -1,20 +1,44 @@
+<!DOCTYPE html>
 <html>
 
+<head>
+    <link rel='stylesheet' href='/stylesheets/main.css' />
+</head>
+
 <body>
-    <form method="post">
-        <div>
-            <label>Email:</label>
-            <input type="text" name="email" />
-            <br />
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container">
+                <div class="box">
+                    <form method="post">
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <p class="control has-icon has-icon-right">
+                                <input class="input" type="text" placeholder="Email input" name="email">
+                                <span class="icon is-small">
+                                    <i class="fa fa-mail"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Password</label>
+                            <p class="control has-icon has-icon-right">
+                                <input class="input" type="password" placeholder="Password" name="password">
+                                <span class="icon is-small">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <div>
+                            <input class="button is-primary" type="submit" value="Submit" />
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <label>Password:</label>
-            <input type="password" name="password" />
-        </div>
-        <div>
-            <input type="submit" value="Submit" />
-        </div>
-    </form>
+    </section>
 </body>
 
 </html>
