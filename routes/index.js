@@ -18,7 +18,14 @@ router.get("/add", (req, res) => {
 
 /* POST add page. */
 router.post("/add", (req, res) => {
-  
+  Note.create({
+    title: req.body.title,
+    subtitle: req.body.subtitle
+  }).then(result => {
+    res.json(result);
+  }).catch(e => {
+    res.json({ error: e.message });
+  })
 });
 
 router.use("/dashboard", require("./protectedRoutes/dashboard"));
