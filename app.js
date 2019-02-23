@@ -17,12 +17,23 @@ mongoose.Promise = global.Promise;
 // User Model
 const User = require("./models/User");
 
-mongoose
-  .connect("mongodb://localhost:27017/nodesetup", {
-    useNewUrlParser: true
-  })
-  .then(() => console.log("connection successful"))
-  .catch(err => console.error(err));
+// mongoose
+//   .connect("mongodb://localhost:27017/nodesetup", {
+//     useNewUrlParser: true
+//   })
+//   .then(() => console.log("connection successful"))
+//   .catch(err => console.error(err));
+
+  //Set up default mongoose connection
+var mongoDB = 'mongodb://webdev:webdev1234@ds349045.mlab.com:49045/webdevbootcamp';
+mongoose.connect(mongoDB);
+// Get Mongoose to use the global promise library
+mongoose.Promise = global.Promise;
+//Get the default connection
+var db = mongoose.connection;
+
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // configure passport.js to use the local strategy
 passport.use(
