@@ -7,7 +7,7 @@ const router = express.Router();
 /* GET home page. */
 router.get("/", (req, res) => {
   Note.find().then(results => {
-    res.render("test", { results });
+    res.render("index", { results });
   }).catch(e => console.log('Some error occured'));
 });
 

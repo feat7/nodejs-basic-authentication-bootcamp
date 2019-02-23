@@ -3,7 +3,6 @@
 
 <head>
   <meta name="viewport" content="width=device-width; initial-scale=1">
-  <title><%= title %></title>
   <link rel='stylesheet' href='/stylesheets/main.css' />
 </head>
 
@@ -11,8 +10,11 @@
   <div class="hero is-fullheight">
     <div class="hero-body">
       <div class="container">
-        <h1 class="title has-text-primary"><%= title %></h1>
-        <p>Welcome to <%= title %></p>
+        <% for(var i=0; i<results.length; i++) { %>
+          <div class="title">
+            <%= results[i].title %>
+          </div>
+        <% } %>
       </div>
     </div>
   </div>
